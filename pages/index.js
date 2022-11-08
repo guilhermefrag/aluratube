@@ -7,23 +7,25 @@ import { StyledTimeline } from "../src/components/Timeline";
 
 function HomePage() {
 
-    const [valorDoFiltro, setvalorDoFiltro] = React.useState("Frost");
+    const [valorDoFiltro, setValorDoFiltro] = React.useState("");
 
     return (
         <>
-        <CSSReset />
-        <div style={{
-            display: "flex",
-            flexDirection: "column",
-            flex: 1,
-        }}>
-            <Menu valorDoFiltro={valorDoFiltro} setvalorDoFiltro={setvalorDoFiltro} />
-            <Header />
-            <Timeline searchValue={valorDoFiltro} playlists={config.playlists}>
-                Conteúdo
-            </Timeline>
-        </div>
-    </>
+            <CSSReset />
+            <div style={{
+                display: "flex",
+                flexDirection: "column",
+                flex: 1,
+                // backgroundColor: "red",
+            }}>
+                {/* Prop Drilling */}
+                <Menu valorDoFiltro={valorDoFiltro} setValorDoFiltro={setValorDoFiltro} />
+                <Header />
+                <Timeline searchValue={valorDoFiltro} playlists={config.playlists}>
+                    Conteúdo
+                </Timeline>
+            </div>
+        </>
     );
 }
 
@@ -36,7 +38,6 @@ const StyledHeader = styled.div`
         border-radius: 50%;
     }
     .user-info {
-        margin-top: 50px;
         display: flex;
         align-items: center;
         width: 100%;
@@ -44,20 +45,31 @@ const StyledHeader = styled.div`
         gap: 16px;
     }
 `;
+
+const StyledBanner = styled.div`
+    background-color: blue;
+    background-image: url(${config.bg});
+    background-size: cover;
+    height: 230px;
+
+
+`;
 function Header() {
     return (
         <StyledHeader>
-            <section className="user-info">
-                <img src={`https://github.com/${config.github}.png`} />
-                <div>
-                    <h2>
-                        {config.name}
-                    </h2>
-                    <p>
-                        {config.job}
-                    </p>
-                </div>
-            </section>
+            <StyledBanner/>
+                <section className="user-info">
+                    <img src={`https://github.com/${config.github}.png`} />
+                    <div>
+                        <h2>
+                            {config.name}
+                        </h2>
+                        <p>
+                            {config.job}
+                        </p>
+                    </div>
+                </section>
+            
         </StyledHeader>
     )
 }
@@ -69,15 +81,17 @@ function Timeline({searchValue , ...props}) {
             {playlistNames.map((playlistName) => {
                 const videos = props.playlists[playlistName];
                 return(
-                    <section>
+                    <section key={playlistName}>
                         <h2>{playlistName}</h2>
                         <div>
                             {videos.filter((video)=> {
-
-                                return video.title.includes(searchValue);
+                                const titleNormalized = video.title.toLowerCase();
+                                const searchValueNormalized = searchValue.toLowerCase();
+                                
+                                return titleNormalized.includes(searchValueNormalized);
                             }).map((video) => {
                                 return(
-                                    <a href={video.url}>
+                                    <a key={video.url} href={video.url}>
                                         <img src={video.thumb} />
                                         <span>
                                             {video.title}
