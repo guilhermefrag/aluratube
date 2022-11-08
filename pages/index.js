@@ -1,3 +1,4 @@
+import React from "react";
 import config from "../config.json";
 import styled from "styled-components"
 import { CSSReset } from "../src/components/CSSReset";
@@ -5,6 +6,9 @@ import Menu from "../src/components/Menu";
 import { StyledTimeline } from "../src/components/Timeline";
 
 function HomePage() {
+
+    const [valorDoFiltro, setvalorDoFiltro] = React.useState("Frost");
+
     return (
         <>
         <CSSReset />
@@ -12,11 +16,10 @@ function HomePage() {
             display: "flex",
             flexDirection: "column",
             flex: 1,
-            // backgroundColor: "red",
         }}>
-            <Menu />
+            <Menu valorDoFiltro={valorDoFiltro} setvalorDoFiltro={setvalorDoFiltro} />
             <Header />
-            <Timeline playlists={config.playlists}>
+            <Timeline searchValue={valorDoFiltro} playlists={config.playlists}>
                 Conteúdo
             </Timeline>
         </div>
@@ -44,7 +47,6 @@ const StyledHeader = styled.div`
 function Header() {
     return (
         <StyledHeader>
-            {/* <img src="banner" /> */}
             <section className="user-info">
                 <img src={`https://github.com/${config.github}.png`} />
                 <div>
@@ -60,8 +62,7 @@ function Header() {
     )
 }
 
-function Timeline(props) {
-    console.log("Dentro do componente Timeline", props);
+function Timeline({searchValue , ...props}) {
     const playlistNames = Object.keys(props.playlists);
     return (
         <StyledTimeline>
@@ -71,7 +72,10 @@ function Timeline(props) {
                     <section>
                         <h2>{playlistName}</h2>
                         <div>
-                            {videos.map((video) => {
+                            {videos.filter((video)=> {
+
+                                return video.title.includes(searchValue);
+                            }).map((video) => {
                                 return(
                                     <a href={video.url}>
                                         <img src={video.thumb} />
